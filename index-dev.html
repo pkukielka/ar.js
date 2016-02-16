@@ -5,9 +5,38 @@
     <title>The Scala.js Tutorial</title>
   </head>
   <body>
+    <video hidden autoplay></video>
+    <canvas width="1024" height="768"></canvas>
+
+    <script type="text/javascript" src="src/main/javascript/adapter.js"></script>
     <script type="text/javascript" src="./target/scala-2.11/augmented-reality-with-scala-js-fastopt.js"></script>
     <script type="text/javascript">
       arjs.BasicApp().main();
+
+      var video = document.querySelector('video');
+
+      video.addEventListener('play', function() {
+         setInterval(function() {
+            if (video.paused || video.ended) return;
+            var canvas = document.querySelector('canvas');
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+         }, 20);
+      }, false);
+
+      var constraints = {
+        audio: false,
+        video: true
+      };
+
+      function successCallback(stream) {
+        video.srcObject = stream;
+      }
+
+      function errorCallback(error) {
+        console.log('navigator.getUserMedia error: ', error);
+      }
+
+      navigator.getUserMedia(constraints, successCallback, errorCallback);
     </script>
   </body>
 </html>
