@@ -11,17 +11,13 @@
     <script type="text/javascript" src="src/main/javascript/adapter.js"></script>
     <script type="text/javascript" src="./target/scala-2.11/augmented-reality-with-scala-js-fastopt.js"></script>
     <script type="text/javascript">
-      arjs.BasicApp().main();
-
       var video = document.querySelector('video');
-
+      var canvas = document.querySelector('canvas');
       video.addEventListener('play', function() {
          setInterval(function() {
-            if (video.paused || video.ended) return;
-            var canvas = document.querySelector('canvas');
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            arjs.Camera().drawOnCanvas(video, canvas)
          }, 20);
-      }, false);
+       }, false);
 
       var constraints = {
         audio: false,
