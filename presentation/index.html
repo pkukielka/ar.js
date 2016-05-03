@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Augmented Reality in Scala.js</title>
+  <meta name="description" content="Augmented Reality in Scala.js">
+  <meta name="author" content="Piotr Kukielka">
+
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+  <style type="text/css">
+		.lefty {
+		text-align: left;
+		font-size: 65% !important;
+		margin-left: 5%  !important;
+		}
+
+    html.background body {
+      background:url("imgs/background.jpg");
+      background-position:center;
+      background-size: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+  <!-- Code syntax highlighting -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+
+  <!--[if lt IE 9]>
+  <script src="lib/js/html5shiv.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript" src="js/ar.js/adapter.js"></script>
+  <script type="text/javascript" src="js/ar.js/simple-camera.js"></script>
+</head>
+
+<body>
+
+<video hidden autoplay></video>
+
+<div class="reveal">
+
+<div class="slides">
+
+<!-- ################################################################################################################ -->
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Piotr Kukiełka
+
+  piotr.kukielka@gmail.com
+
+  <div style="margin-left: 36% text-align: left;">
+    <img src="imgs/gh.png" style="background: none; border: none; margin: 0px"> pkukielka
+    <br>
+    <img src="imgs/twitter.png" style="background: none; border: none; margin: 0px"> pkukielka
+  </div>
+
+  <img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Augmented Reality in Scala.js
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Augmented reality
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### What is augmented reality?
+
+  Augmented reality (AR) is a live direct or indirect view of a physical, real-world environment whose elements are augmented
+  (or supplemented) by computer-generated sensory input such as sound, video, graphics or GPS data.
+
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  <img src="imgs/HoloLens.png" alt="Microsoft HoloLens" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+  <script type="text/template">
+    <img src="imgs/GoogleGlass.png" alt="Google Glass" style="background: none; border: none; box-shadow: none"/>
+  </script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Why augmented reality is hard?
+
+  Requires blazingly fast:
+
+  * Objects tracking
+  * Image recognition
+
+
+  And often also advanced input/output devices.
+
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  <img src="imgs/easy.jpg" alt="Easy with Scala.js" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Scala.js
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Why Scala.js?
+  * Performance
+  * Excellent editor support
+  * Correctness
+  * Advanced language features
+  * Interoperability
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Performance
+  Benchmark suite from Dart, using V8 engine.
+  <img src="imgs/benchmarks.png" alt="Benchmarks" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Excellent editor support
+  * Typos and type-errors immediately shown in  editor
+  * Autocompletion and all other "smart" features
+  * Easier access to the documentation
+  * Working refactorings
+  <img src="imgs/ide.png" alt="IDE" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Correctness
+  * Immutability
+  * Exhaustive pattern matching
+  * A strict type system
+  * An expressive type system
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Advanced language features
+  Type inference, traits, vals, implicits,
+  case classes, value classes, static objects, extractors,
+  pattern matching, type variance, macros, string interpolation
+  immutable datatypes, lazy vals, existential types,
+  higher-kinded types, type classes, for comprehensions...
+
+  ####... and the list go on
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+### Interoperability
+
+ES6:
+<pre><code data-trim data-noescape>
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "https://api.twitter.com/1.1/search.json?q=scalajs");
+xhr.onload = (e) => {
+  if (xhr.status === 200) {
+    var r = JSON.parse(xhr.responseText);
+    $("#tweets").html(parseTweets(r));
+  }
+}
+</code></pre>
+
+Scala:
+<pre><code data-trim data-noescape>
+val xhr = new XMLHttpRequest()
+xhr.open("GET","https://api.twitter.com/1.1/search.json?q=scalajs")
+xhr.onload = { (e: Event) =>
+  if (xhr.status == 200) {
+    val r = JSON.parse(xhr.responseText)
+    $("#tweets").html(parseTweets(r))
+  }
+}
+</code></pre>
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Project setup
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Sbt
+
+  _build.sbt:_
+<pre><code data-trim data-noescape>
+enablePlugins(ScalaJSPlugin)
+
+name := "Augmented Reality in Scala.js"
+
+scalaVersion := "2.11.7"
+
+libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.0"
+</code></pre>
+
+  _project/plugins.sbt:_
+<pre><code data-trim data-noescape>
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.9")
+</code></pre>
+
+ _project/build.properties:_
+<pre><code data-trim data-noescape>
+  sbt.version=0.13.9
+</code></pre>
+
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Basic Scala file
+  _src/main/scala/arjs/hello/HelloWorldApp.scala:_
+<pre><code data-trim data-noescape>
+package arjs.hello
+
+import scala.scalajs.js.JSApp
+
+object HelloWorldApp extends JSApp {
+  def main(): Unit = {
+    println("Hello world!")
+  }
+}
+</code></pre>
+</script>
+</section>
+
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Basic HTML file
+  _index-dev.html:_
+<pre><code data-trim data-noescape>
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Augmented Reality in Scala.js&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script
+      type=&quot;text/javascript&quot;
+      src=&quot;./target/scala-2.11/augmented-reality-in-scala-js-fastopt.js&quot;&gt;
+    &lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+      arjs.hello.HelloWorldApp().main();
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Building
+
+  Fast build in sbt:
+<pre><code data-trim data-noescape>
+> fastOptJS
+[info] Compiling 1 Scala source to (...)/ar.js/target/scala-2.11/classes...
+[info] Fast optimizing (...)/ar.js/target/scala-2.11/augmented-reality-in-scala-js-fastopt.js
+[success] (...)
+</code></pre>
+
+Build on change:
+<pre><code data-trim data-noescape>
+> ~fastOptJS
+[info] Compiling 1 Scala source to (...)/ar.js/target/scala-2.11/classes...
+[info] Fast optimizing (...)/ar.js/target/scala-2.11/augmented-reality-with-scala-js-fastopt.js
+[success] Total time: 5 s, completed 2016-05-03 20:32:16
+1. Waiting for source changes... (press enter to interrupt)
+</code></pre>
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Input from camera
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+### Multiple options
+<br>
+
+  * HTML Media Capture
+  * &lt;device&gt; element
+  * WebRTC (getUserMedia)
+
+<br>
+#### But only WebRTC really works.
+</script>
+</section>
+
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### WebRTC adapter
+
+  https://github.com/webrtc/adapter:
+
+  _adapter.js_ is a shim to insulate apps from spec changes and prefix differences.
+  In fact, the standards and protocols used for WebRTC implementations are highly stable,
+  and there are only a few prefixed names. For full interop information, see webrtc.org/web-apis/interop.
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  _index-dev.html:_
+<pre><code data-trim data-noescape>
+&lt;video hidden autoplay&gt;&lt;/video&gt;
+&lt;canvas width=&quot;1024&quot; height=&quot;768&quot;&gt;&lt;/canvas&gt;
+&lt;script src=&quot;src/main/javascript/adapter.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  var video = document.querySelector('video');
+  var canvas = document.querySelector('canvas');
+  video.addEventListener('play', function() {
+    setInterval(function() {
+      arjs.Camera().drawOnCanvas(video, canvas)
+    }, 10);
+  }, false);
+
+  var constraints = { audio: false, video: true };
+  function successCallback(stream) { video.srcObject = stream; }
+  function errorCallback(error) { console.log(error); }
+  navigator.getUserMedia(constraints, successCallback, errorCallback);
+&lt;/script&gt;
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  _src/main/scala/arjs/Camera.scala:_
+<pre><code data-trim data-noescape>
+package arjs
+
+import ...
+
+@JSExport
+object Camera {
+
+  @JSExport
+  def drawOnCanvas(video: Video, canvas: Canvas): Unit = {
+
+    val ctx = canvas.getContext("2d").
+      asInstanceOf[CanvasRenderingContext2D]
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+  }
+}
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background initCamera">
+<script type="text/template">
+  <canvas  width="800" height="600"></canvas>
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## The mix
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+</div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+  // Full list of configuration options available at:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+    // Optional reveal.js plugins
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+    ]
+  });
+</script>
+
+<script>
+  Reveal.addEventListener('slidechanged', function(event) {
+    var video = document.querySelector('video');
+    var canvas = event.currentSlide.querySelector('canvas');
+    console.log(event)
+    if (canvas != null) {
+       video.addEventListener('play', function() {
+         setInterval(function() {
+            arjs.Camera().drawOnCanvas(video, canvas)
+         }, 20);
+       }, false);
+
+      var constraints = {
+        audio: false,
+        video: true
+      };
+
+      function successCallback(stream) {
+        video.srcObject = stream;
+      }
+
+      function errorCallback(error) {
+        console.log('navigator.getUserMedia error: ', error);
+      }
+
+      navigator.getUserMedia(constraints, successCallback, errorCallback);
+    }
+  });
+</script>
+
+</body>
+</html>
