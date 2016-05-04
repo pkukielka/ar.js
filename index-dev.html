@@ -6,18 +6,22 @@
   </head>
   <body>
     <video hidden autoplay></video>
-    <canvas width="1024" height="768"></canvas>
+    <canvas id="canvas" width="1024" height="768"></canvas>
 
     <script type="text/javascript" src="src/main/javascript/adapter.js"></script>
     <script type="text/javascript" src="./target/scala-2.11/augmented-reality-with-scala-js-fastopt.js"></script>
     <script type="text/javascript">
       var video = document.querySelector('video');
-      var canvas = document.querySelector('canvas');
+      var canvas = document.getElementById('canvas');
+
       video.addEventListener('play', function() {
-         setInterval(function() {
-            arjs.Camera().drawOnCanvas(video, canvas)
-         }, 20);
-       }, false);
+        setTimeout(function() {
+          var camera = new arjs.Camera(video, canvas)
+          setInterval(function() {
+            camera.drawOnCanvas()
+          }, 20);
+        }, 3000);
+      }, false);
 
       var constraints = {
         audio: false,

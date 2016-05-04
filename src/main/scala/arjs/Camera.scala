@@ -6,11 +6,15 @@ import org.scalajs.dom.html
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
-object Camera {
+class Camera(video: html.Video, canvas: html.Canvas) {
+
+  val greenScreen = new GreenScreen(video, canvas)
 
   @JSExport
-  def drawOnCanvas(video: html.Video, canvas: html.Canvas): Unit = {
-    val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+  def drawOnCanvas(): Unit = {
+    val context = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+    greenScreen.drawGreenScreen()
   }
+
 }
