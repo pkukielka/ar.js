@@ -432,7 +432,7 @@ object Camera {
 
 <section data-markdown data-state="background initCamera">
 <script type="text/template">
-  <canvas  width="800" height="600"></canvas>
+  <canvas id="simple" width="800" height="600"></canvas>
 </script>
 </section>
 
@@ -444,27 +444,198 @@ object Camera {
 
 <section data-markdown data-state="background">
 <script type="text/template">
-  ## Green screen
+  ## Object tracking and image recognition
 </script>
 </section>
 
 <section data-markdown data-state="background">
 <script type="text/template">
+  ### We have to cheat
+
+  * Even full blown solutions like OpenCV could be insufficient
+  * We want to get cool effects with minimum effort
 </script>
 </section>
 
 <section data-markdown data-state="background">
 <script type="text/template">
+  ### Object tracking
+
+  Object tracking is relatively easy when tracked object stands out from its surroundings.
+  If we could reduce background noise it would help us tremendously.
 </script>
 </section>
 
 <section data-markdown data-state="background">
 <script type="text/template">
+  <img src="imgs/chameleon1.jpg" alt="Hard to notice chameleon" style="background: none; border: none; box-shadow: none"/>
 </script>
 </section>
 
 <section data-markdown data-state="background">
 <script type="text/template">
+  <img src="imgs/chameleon2.jpg" alt="Easy to notice chameleon" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Solution: Greenscreen
+
+  <img src="imgs/greenscreen-lotr.jpg" alt="Greenscreen used during filming LotR" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### But...
+
+  We don't want to buy any green rag.<br>
+  We don't want to setup the scene.
+
+  #### What can we do?
+</script>
+</section>
+
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### We can do it programmatically
+  <img src="imgs/greenscreen-me.png" alt="Me on greenscreen" style="background: none; border: none; box-shadow: none"/>
+  ### Trust me, I'm an engineer
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+### TIP: Our camera is static
+
+We can:
+<ol type="1">
+  <li>Make screenshot of the background</li>
+  <li>Compare it with current view to filter out static elements</li>
+</ol>
+<br><br>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### But pixel-to-pixel comparison won't work
+  <img src="imgs/witcher-pixels.png" alt="Witcher pixels" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Solution: compare downsized images
+  <img src="imgs/witcher-pixels2.png" alt="Witcher pixels" style="background: none; border: none; box-shadow: none">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Scaling image down is easy:
+<pre><code data-trim data-noescape>
+type CRC2D =  CanvasRenderingContext2D
+
+implicit def canvasToContext(canvas: html.Canvas): CRC2D =
+  canvas.getContext("2d").asInstanceOf[CRC2D]
+
+def createDownscaledCanvas(canvas: Canvas) = {
+  val downScaleFactor = 6
+  val newCanvas = dom.document.
+    createElement("canvas").asInstanceOf[Canvas]
+
+  newCanvas.width = canvas.width / downScaleFactor
+  newCanvas.height = canvas.height / downScaleFactor
+  newCanvas.drawImage(video, 0, 0, newCanvas.width, newCanvas.height)
+  newCanvas
+}
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Comparing pixel colours is hard
+  <img src="imgs/hsv.png" alt="HSV model" style="background: none; border: none; box-shadow: none"/>
+  Hue and saturation should be similar, value can differ (for example sue to slight lighting change).
+  Absolute difference between RGB components also should be limited.
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  Still, decision if two pixels are the same is arbitrary.
+<pre><code data-trim data-noescape>
+def computeInitialGreenScreenValues(): Unit = {
+  val maxColorDelta = 35
+  val (deltaValueMin, deltaValueMax) = (0.85, 1.15)
+
+  for (i <- 0 until bkPixels.length by 4) {
+    greenScreen(i / 4) =
+      RedToGreenRatio(bkPixels, currPixels, i) > deltaValueMin &&
+      RedToGreenRatio(bkPixels, currPixels, i) < deltaValueMax &&
+      GreenToBlueRatio(bkPixels, currPixels, i) > deltaValueMin &&
+      GreenToBlueRatio(bkPixels, currPixels, i) < deltaValueMax &&
+      Math.abs(bkPixels(i) - currPixels(i)) < maxColorDelta &&
+      Math.abs(bkPixels(i + 1) - currPixels(i + 1)) < maxColorDelta &&
+      Math.abs(bkPixels(i + 2) - currPixels(i + 2)) < maxColorDelta
+  }
+}
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Some noise is unavoidable
+
+  <img src="imgs/artefacts.png" alt="Me on greenscreen" style="background: none; border: none; box-shadow: none"/>
+
+  But single pixels (as well as one-pixel thin vertical and horizontal lines) are easy to remove.
+</script>
+</section>
+
+
+<section data-markdown data-state="background">
+<script type="text/template">
+It's simple optimization but it helps a lot:
+<pre><code data-trim data-noescape>
+def optimizeInitialGreenScreenValues(): Unit = {
+  val repetitions = 2
+  for (i <- 1 to repetitions) {
+  for (i <- 0 until greenScreen.length) {
+    def isGs(x: Int, y: Int) = greenScreen(x + (y * baseCanvas.width))
+
+    val x = i % baseCanvas.width
+    val y = i / baseCanvas.width
+    if ((isGs(x - 1, y) && isGs(x + 1, y)) ||
+      (isGs(x, y - 1) && isGs(x, y + 1))) greenScreen(i) = true
+    if ((!isGs(x - 1, y) && !isGs(x + 1, y)) ||
+      (!isGs(x, y - 1) && !isGs(x, y + 1))) greenScreen(i) = false
+    }
+  }
+}
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### How it works in practice?
+
+  <img src="imgs/reliable.png" alt="Reliable?" style="background: none; border: none; box-shadow: none"/>
+
+  But a lot depends on camera and light quality.<br>
+  Also lighting changes can do a lot of harm.
+</script>
+</section>
+
+<section data-markdown data-state="background initCamera">
+<script type="text/template">
+  <canvas id="gs" width="800" height="600"></canvas>
 </script>
 </section>
 
@@ -505,12 +676,15 @@ object Camera {
   Reveal.addEventListener('slidechanged', function(event) {
     var video = document.querySelector('video');
     var canvas = event.currentSlide.querySelector('canvas');
-    console.log(event)
+
     if (canvas != null) {
        video.addEventListener('play', function() {
-         setInterval(function() {
-            arjs.Camera().drawOnCanvas(video, canvas)
-         }, 20);
+         setTimeout(function() {
+            var camera = new arjs.Camera(video, canvas, canvas.id == 'gs')
+            setInterval(function() {
+              camera.drawOnCanvas()
+            }, 20);
+          }, 3000);
        }, false);
 
       var constraints = {

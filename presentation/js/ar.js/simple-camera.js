@@ -1065,47 +1065,387 @@ var $d_O = new $TypeData().initClass({
 }, (void 0), (void 0), $is_O, $isArrayOf_O);
 $c_O.prototype.$classData = $d_O;
 /** @constructor */
-function $c_Larjs_Camera$() {
-  $c_O.call(this)
+function $c_Larjs_Camera() {
+  $c_O.call(this);
+  this.video$1 = null;
+  this.canvas$1 = null;
+  this.drawGreenScreen$1 = false;
+  this.greenScreen$1 = null
 }
-$c_Larjs_Camera$.prototype = new $h_O();
-$c_Larjs_Camera$.prototype.constructor = $c_Larjs_Camera$;
+$c_Larjs_Camera.prototype = new $h_O();
+$c_Larjs_Camera.prototype.constructor = $c_Larjs_Camera;
 /** @constructor */
-function $h_Larjs_Camera$() {
+function $h_Larjs_Camera() {
   /*<skip>*/
 }
-$h_Larjs_Camera$.prototype = $c_Larjs_Camera$.prototype;
-$c_Larjs_Camera$.prototype.init___ = (function() {
+$h_Larjs_Camera.prototype = $c_Larjs_Camera.prototype;
+$c_Larjs_Camera.prototype.drawOnCanvas__V = (function() {
+  var context = this.canvas$1.getContext("2d");
+  context.drawImage(this.video$1, 0.0, 0.0, $uI(this.canvas$1.width), $uI(this.canvas$1.height));
+  if (this.drawGreenScreen$1) {
+    this.greenScreen$1.drawGreenScreen__V()
+  }
+});
+$c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__Z = (function(video, canvas, drawGreenScreen) {
+  this.video$1 = video;
+  this.canvas$1 = canvas;
+  this.drawGreenScreen$1 = drawGreenScreen;
+  this.greenScreen$1 = new $c_Larjs_GreenScreen().init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement(video, canvas);
   return this
 });
-$c_Larjs_Camera$.prototype.$$js$exported$meth$drawOnCanvas__Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__O = (function(video, canvas) {
-  this.drawOnCanvas__Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__V(video, canvas)
+$c_Larjs_Camera.prototype.$$js$exported$meth$drawOnCanvas__O = (function() {
+  this.drawOnCanvas__V()
 });
-$c_Larjs_Camera$.prototype.drawOnCanvas__Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__V = (function(video, canvas) {
-  var ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0.0, 0.0, $uI(canvas.width), $uI(canvas.height))
+$c_Larjs_Camera.prototype.drawOnCanvas = (function() {
+  return this.$$js$exported$meth$drawOnCanvas__O()
 });
-$c_Larjs_Camera$.prototype.drawOnCanvas = (function(arg$1, arg$2) {
-  var prep0 = arg$1;
-  var prep1 = arg$2;
-  return this.$$js$exported$meth$drawOnCanvas__Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__O(prep0, prep1)
-});
-var $d_Larjs_Camera$ = new $TypeData().initClass({
-  Larjs_Camera$: 0
-}, false, "arjs.Camera$", {
-  Larjs_Camera$: 1,
+var $d_Larjs_Camera = new $TypeData().initClass({
+  Larjs_Camera: 0
+}, false, "arjs.Camera", {
+  Larjs_Camera: 1,
   O: 1
 });
-$c_Larjs_Camera$.prototype.$classData = $d_Larjs_Camera$;
-var $n_Larjs_Camera$ = (void 0);
-function $m_Larjs_Camera$() {
-  if ((!$n_Larjs_Camera$)) {
-    $n_Larjs_Camera$ = new $c_Larjs_Camera$().init___()
-  };
-  return $n_Larjs_Camera$
-}
+$c_Larjs_Camera.prototype.$classData = $d_Larjs_Camera;
 $e.arjs = ($e.arjs || {});
-$e.arjs.Camera = $m_Larjs_Camera$;
+/** @constructor */
+$e.arjs.Camera = (function(arg$1, arg$2, arg$3) {
+  var $thiz = new $c_Larjs_Camera();
+  var prep0 = arg$1;
+  var prep1 = arg$2;
+  var prep2 = $uZ(arg$3);
+  $c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__Z.call($thiz, prep0, prep1, prep2);
+  return $thiz
+});
+$e.arjs.Camera.prototype = $c_Larjs_Camera.prototype;
+/** @constructor */
+function $c_Larjs_GreenScreen() {
+  $c_O.call(this);
+  this.video$1 = null;
+  this.arjs$GreenScreen$$canvas$f = null;
+  this.deltaSingleColor$1 = 0;
+  this.deltaValueMin$1 = 0.0;
+  this.deltaValueMax$1 = 0.0;
+  this.downScaleFactor$1 = 0;
+  this.baseCanvas$1 = null;
+  this.backCanvas$1 = null;
+  this.greenScreen$1 = null
+}
+$c_Larjs_GreenScreen.prototype = new $h_O();
+$c_Larjs_GreenScreen.prototype.constructor = $c_Larjs_GreenScreen;
+/** @constructor */
+function $h_Larjs_GreenScreen() {
+  /*<skip>*/
+}
+$h_Larjs_GreenScreen.prototype = $c_Larjs_GreenScreen.prototype;
+$c_Larjs_GreenScreen.prototype.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D = (function(canvas) {
+  return canvas.getContext("2d")
+});
+$c_Larjs_GreenScreen.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement = (function(video, canvas) {
+  this.video$1 = video;
+  this.arjs$GreenScreen$$canvas$f = canvas;
+  this.deltaSingleColor$1 = 35;
+  this.deltaValueMin$1 = 0.85;
+  this.deltaValueMax$1 = 1.15;
+  this.downScaleFactor$1 = 6;
+  this.baseCanvas$1 = this.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement();
+  this.backCanvas$1 = this.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement();
+  this.greenScreen$1 = $newArrayObject($d_Z.getArrayOf(), [$imul($uI(this.baseCanvas$1.width), $uI(this.baseCanvas$1.height))]);
+  return this
+});
+$c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
+  var i = 1;
+  var count = 0;
+  while ((i !== 3)) {
+    var $$this = $uI(this.baseCanvas$1.width);
+    var end = ((this.greenScreen$1.u.length - $uI(this.baseCanvas$1.width)) | 0);
+    var isEmpty$4 = ($$this >= end);
+    var numRangeElements$4 = (isEmpty$4 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I($$this)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end - $$this) | 0)));
+    var lastElement$4 = (isEmpty$4 ? (((-1) + $$this) | 0) : (((-1) + end) | 0));
+    var terminalElement$4 = ((1 + lastElement$4) | 0);
+    if ((numRangeElements$4 < 0)) {
+      $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$($$this, end, 1, false)
+    };
+    var isCommonCase = (($$this !== (-2147483648)) || (end !== (-2147483648)));
+    var i$2 = $$this;
+    var count$1 = 0;
+    while ((isCommonCase ? (i$2 !== terminalElement$4) : (count$1 < numRangeElements$4))) {
+      var i$3 = i$2;
+      var x$1 = ((i$3 % $uI(this.baseCanvas$1.width)) | 0);
+      var y = ((i$3 / $uI(this.baseCanvas$1.width)) | 0);
+      var x$2 = (((-1) + x$1) | 0);
+      if (this.greenScreen$1.u[((x$2 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)]) {
+        var x$3 = ((1 + x$1) | 0);
+        var jsx$2 = this.greenScreen$1.u[((x$3 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)]
+      } else {
+        var jsx$2 = false
+      };
+      if (jsx$2) {
+        var jsx$1 = true
+      } else {
+        var y$1 = (((-1) + y) | 0);
+        if (this.greenScreen$1.u[((x$1 + $imul(y$1, $uI(this.baseCanvas$1.width))) | 0)]) {
+          var y$2 = ((1 + y) | 0);
+          var jsx$1 = this.greenScreen$1.u[((x$1 + $imul(y$2, $uI(this.baseCanvas$1.width))) | 0)]
+        } else {
+          var jsx$1 = false
+        }
+      };
+      if (jsx$1) {
+        this.greenScreen$1.u[i$3] = true
+      };
+      var x$4 = (((-1) + x$1) | 0);
+      if ((!this.greenScreen$1.u[((x$4 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)])) {
+        var x$5 = ((1 + x$1) | 0);
+        var jsx$4 = (!this.greenScreen$1.u[((x$5 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)])
+      } else {
+        var jsx$4 = false
+      };
+      if (jsx$4) {
+        var jsx$3 = true
+      } else {
+        var y$3 = (((-1) + y) | 0);
+        if ((!this.greenScreen$1.u[((x$1 + $imul(y$3, $uI(this.baseCanvas$1.width))) | 0)])) {
+          var y$4 = ((1 + y) | 0);
+          var jsx$3 = (!this.greenScreen$1.u[((x$1 + $imul(y$4, $uI(this.baseCanvas$1.width))) | 0)])
+        } else {
+          var jsx$3 = false
+        }
+      };
+      if (jsx$3) {
+        this.greenScreen$1.u[i$3] = false
+      };
+      count$1 = ((1 + count$1) | 0);
+      i$2 = ((1 + i$2) | 0)
+    };
+    count = ((1 + count) | 0);
+    i = ((1 + i) | 0)
+  }
+});
+$c_Larjs_GreenScreen.prototype.drawGreenScreen__V = (function() {
+  this.computeInitialValues__V();
+  this.optimizeInitialValues__V();
+  var canvasImageData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f).getImageData(0.0, 0.0, $uI(this.arjs$GreenScreen$$canvas$f.width), $uI(this.arjs$GreenScreen$$canvas$f.height));
+  var canvasData = canvasImageData.data;
+  var xs = this.greenScreen$1;
+  var end = xs.u.length;
+  var isEmpty$4 = (end <= 0);
+  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+  var lastElement$4 = (isEmpty$4 ? (-1) : (((-1) + end) | 0));
+  var terminalElement$4 = ((1 + lastElement$4) | 0);
+  if ((numRangeElements$4 < 0)) {
+    $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(0, end, 1, false)
+  };
+  var i = 0;
+  var count = 0;
+  while ((i !== terminalElement$4)) {
+    var i$1 = i;
+    var xbase = $imul(((i$1 % $uI(this.baseCanvas$1.width)) | 0), this.downScaleFactor$1);
+    var ybase = $imul(((i$1 / $uI(this.baseCanvas$1.width)) | 0), this.downScaleFactor$1);
+    if (this.greenScreen$1.u[i$1]) {
+      var end$1 = ((xbase + this.downScaleFactor$1) | 0);
+      var isEmpty$4$1 = (xbase >= end$1);
+      var numRangeElements$4$1 = (isEmpty$4$1 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end$1).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I(xbase)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end$1 - xbase) | 0)));
+      var lastElement$4$1 = (isEmpty$4$1 ? (((-1) + xbase) | 0) : (((-1) + end$1) | 0));
+      var terminalElement$4$1 = ((1 + lastElement$4$1) | 0);
+      if ((numRangeElements$4$1 < 0)) {
+        $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(xbase, end$1, 1, false)
+      };
+      var isCommonCase = ((xbase !== (-2147483648)) || (end$1 !== (-2147483648)));
+      var i$2 = xbase;
+      var count$1 = 0;
+      while ((isCommonCase ? (i$2 !== terminalElement$4$1) : (count$1 < numRangeElements$4$1))) {
+        var x = i$2;
+        var end$2 = ((ybase + this.downScaleFactor$1) | 0);
+        var isEmpty$4$2 = (ybase >= end$2);
+        var numRangeElements$4$2 = (isEmpty$4$2 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end$2).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I(ybase)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end$2 - ybase) | 0)));
+        var lastElement$4$2 = (isEmpty$4$2 ? (((-1) + ybase) | 0) : (((-1) + end$2) | 0));
+        var terminalElement$4$2 = ((1 + lastElement$4$2) | 0);
+        if ((numRangeElements$4$2 < 0)) {
+          $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(ybase, end$2, 1, false)
+        };
+        var isCommonCase$1 = ((ybase !== (-2147483648)) || (end$2 !== (-2147483648)));
+        var i$3 = ybase;
+        var count$2 = 0;
+        while ((isCommonCase$1 ? (i$3 !== terminalElement$4$2) : (count$2 < numRangeElements$4$2))) {
+          var v1 = i$3;
+          var pos = $imul(4, ((x + $imul(v1, $uI(this.arjs$GreenScreen$$canvas$f.width))) | 0));
+          canvasData[pos] = 0;
+          canvasData[((1 + pos) | 0)] = 200;
+          canvasData[((2 + pos) | 0)] = 0;
+          count$2 = ((1 + count$2) | 0);
+          i$3 = ((1 + i$3) | 0)
+        };
+        count$1 = ((1 + count$1) | 0);
+        i$2 = ((1 + i$2) | 0)
+      }
+    };
+    count = ((1 + count) | 0);
+    i = ((1 + i) | 0)
+  };
+  var qual$3 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f);
+  qual$3.putImageData(canvasImageData, 0.0, 0.0)
+});
+$c_Larjs_GreenScreen.prototype.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement = (function() {
+  var downscaledCanvas = $m_Lorg_scalajs_dom_package$().document__Lorg_scalajs_dom_raw_HTMLDocument().createElement("canvas");
+  downscaledCanvas.width = (($uI(this.arjs$GreenScreen$$canvas$f.width) / this.downScaleFactor$1) | 0);
+  downscaledCanvas.height = (($uI(this.arjs$GreenScreen$$canvas$f.height) / this.downScaleFactor$1) | 0);
+  var qual$1 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(downscaledCanvas);
+  var x$3 = this.video$1;
+  var x$6 = $uI(downscaledCanvas.width);
+  var x$7 = $uI(downscaledCanvas.height);
+  qual$1.drawImage(x$3, 0.0, 0.0, x$6, x$7);
+  return downscaledCanvas
+});
+$c_Larjs_GreenScreen.prototype.computeInitialValues__V = (function() {
+  var qual$2 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1);
+  var x$12 = this.video$1;
+  var x$15 = $uI(this.backCanvas$1.width);
+  var x$16 = $uI(this.backCanvas$1.height);
+  qual$2.drawImage(x$12, 0.0, 0.0, x$15, x$16);
+  var backData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1).getImageData(0.0, 0.0, $uI(this.backCanvas$1.width), $uI(this.backCanvas$1.height)).data;
+  var baseData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.baseCanvas$1).getImageData(0.0, 0.0, $uI(this.baseCanvas$1.width), $uI(this.baseCanvas$1.height)).data;
+  var end = $uI(baseData.length);
+  var isEmpty$4 = (end <= 0);
+  var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+  var lastElement$4 = (isEmpty$4 ? (-1) : (((-1) + end) | 0));
+  var terminalElement$4 = ((1 + lastElement$4) | 0);
+  var isEmpty$4$1 = (end <= 0);
+  if (isEmpty$4$1) {
+    var numRangeElements$4$1 = 0
+  } else {
+    var x = ((end / 4) | 0);
+    var y = ((((end % 4) | 0) !== 0) ? 1 : 0);
+    var numRangeElements$4$1 = ((((x > 0) && (y > 0)) && (((x + y) | 0) < 0)) ? (-1) : ((x + y) | 0))
+  };
+  if (isEmpty$4$1) {
+    var lastElement$4$1 = (-4)
+  } else {
+    var remainder = ((end % 4) | 0);
+    var lastElement$4$1 = ((remainder !== 0) ? ((end - remainder) | 0) : (((-4) + end) | 0))
+  };
+  var terminalElement$4$1 = ((4 + lastElement$4$1) | 0);
+  if ((numRangeElements$4$1 < 0)) {
+    $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(0, end, 4, false)
+  };
+  var i = 0;
+  var count = 0;
+  while ((i !== terminalElement$4$1)) {
+    var i$1 = i;
+    var _1 = $fround((255.0 + $fround($uI(backData[i$1]))));
+    var _2 = $fround((255.0 + $fround($uI(backData[((1 + i$1) | 0)]))));
+    var _3 = $fround((255.0 + $fround($uI(backData[((2 + i$1) | 0)]))));
+    var _1$1 = $fround((255.0 + $fround($uI(baseData[i$1]))));
+    var _2$1 = $fround((255.0 + $fround($uI(baseData[((1 + i$1) | 0)]))));
+    var _3$1 = $fround((255.0 + $fround($uI(baseData[((2 + i$1) | 0)]))));
+    var jsx$4 = this.greenScreen$1;
+    if ((((($fround(($fround((_1 / _2)) / $fround((_1$1 / _2$1)))) > this.deltaValueMin$1) && ($fround(($fround((_1 / _2)) / $fround((_1$1 / _2$1)))) < this.deltaValueMax$1)) && ($fround(($fround((_2 / _3)) / $fround((_2$1 / _3$1)))) > this.deltaValueMin$1)) && ($fround(($fround((_2 / _3)) / $fround((_2$1 / _3$1)))) < this.deltaValueMax$1))) {
+      var a = (($uI(backData[i$1]) - $uI(baseData[i$1])) | 0);
+      var jsx$3 = (((a < 0) ? ((-a) | 0) : a) < this.deltaSingleColor$1)
+    } else {
+      var jsx$3 = false
+    };
+    if (jsx$3) {
+      var a$1 = (($uI(backData[((1 + i$1) | 0)]) - $uI(baseData[((1 + i$1) | 0)])) | 0);
+      var jsx$2 = (((a$1 < 0) ? ((-a$1) | 0) : a$1) < this.deltaSingleColor$1)
+    } else {
+      var jsx$2 = false
+    };
+    if (jsx$2) {
+      var a$2 = (($uI(backData[((2 + i$1) | 0)]) - $uI(baseData[((2 + i$1) | 0)])) | 0);
+      var jsx$1 = (((a$2 < 0) ? ((-a$2) | 0) : a$2) < this.deltaSingleColor$1)
+    } else {
+      var jsx$1 = false
+    };
+    jsx$4.u[((i$1 / 4) | 0)] = jsx$1;
+    count = ((1 + count) | 0);
+    i = ((4 + i) | 0)
+  }
+});
+var $d_Larjs_GreenScreen = new $TypeData().initClass({
+  Larjs_GreenScreen: 0
+}, false, "arjs.GreenScreen", {
+  Larjs_GreenScreen: 1,
+  O: 1
+});
+$c_Larjs_GreenScreen.prototype.$classData = $d_Larjs_GreenScreen;
+/** @constructor */
+function $c_Lorg_scalajs_dom_package$() {
+  $c_O.call(this);
+  this.ApplicationCache$1 = null;
+  this.Blob$1 = null;
+  this.BlobPropertyBag$1 = null;
+  this.ClipboardEventInit$1 = null;
+  this.DOMException$1 = null;
+  this.Event$1 = null;
+  this.EventException$1 = null;
+  this.EventSource$1 = null;
+  this.FileReader$1 = null;
+  this.FormData$1 = null;
+  this.KeyboardEvent$1 = null;
+  this.MediaError$1 = null;
+  this.MutationEvent$1 = null;
+  this.MutationObserverInit$1 = null;
+  this.Node$1 = null;
+  this.NodeFilter$1 = null;
+  this.PerformanceNavigation$1 = null;
+  this.PositionError$1 = null;
+  this.Range$1 = null;
+  this.TextEvent$1 = null;
+  this.TextTrack$1 = null;
+  this.VisibilityState$1 = null;
+  this.WebSocket$1 = null;
+  this.WheelEvent$1 = null;
+  this.XMLHttpRequest$1 = null;
+  this.XPathResult$1 = null;
+  this.window$1 = null;
+  this.document$1 = null;
+  this.console$1 = null;
+  this.bitmap$0$1 = 0
+}
+$c_Lorg_scalajs_dom_package$.prototype = new $h_O();
+$c_Lorg_scalajs_dom_package$.prototype.constructor = $c_Lorg_scalajs_dom_package$;
+/** @constructor */
+function $h_Lorg_scalajs_dom_package$() {
+  /*<skip>*/
+}
+$h_Lorg_scalajs_dom_package$.prototype = $c_Lorg_scalajs_dom_package$.prototype;
+$c_Lorg_scalajs_dom_package$.prototype.init___ = (function() {
+  return this
+});
+$c_Lorg_scalajs_dom_package$.prototype.document__Lorg_scalajs_dom_raw_HTMLDocument = (function() {
+  return (((134217728 & this.bitmap$0$1) === 0) ? this.document$lzycompute__p1__Lorg_scalajs_dom_raw_HTMLDocument() : this.document$1)
+});
+$c_Lorg_scalajs_dom_package$.prototype.window__Lorg_scalajs_dom_raw_Window = (function() {
+  return (((67108864 & this.bitmap$0$1) === 0) ? this.window$lzycompute__p1__Lorg_scalajs_dom_raw_Window() : this.window$1)
+});
+$c_Lorg_scalajs_dom_package$.prototype.window$lzycompute__p1__Lorg_scalajs_dom_raw_Window = (function() {
+  if (((67108864 & this.bitmap$0$1) === 0)) {
+    this.window$1 = $g;
+    this.bitmap$0$1 = (67108864 | this.bitmap$0$1)
+  };
+  return this.window$1
+});
+$c_Lorg_scalajs_dom_package$.prototype.document$lzycompute__p1__Lorg_scalajs_dom_raw_HTMLDocument = (function() {
+  if (((134217728 & this.bitmap$0$1) === 0)) {
+    this.document$1 = this.window__Lorg_scalajs_dom_raw_Window().document;
+    this.bitmap$0$1 = (134217728 | this.bitmap$0$1)
+  };
+  return this.document$1
+});
+var $d_Lorg_scalajs_dom_package$ = new $TypeData().initClass({
+  Lorg_scalajs_dom_package$: 0
+}, false, "org.scalajs.dom.package$", {
+  Lorg_scalajs_dom_package$: 1,
+  O: 1
+});
+$c_Lorg_scalajs_dom_package$.prototype.$classData = $d_Lorg_scalajs_dom_package$;
+var $n_Lorg_scalajs_dom_package$ = (void 0);
+function $m_Lorg_scalajs_dom_package$() {
+  if ((!$n_Lorg_scalajs_dom_package$)) {
+    $n_Lorg_scalajs_dom_package$ = new $c_Lorg_scalajs_dom_package$().init___()
+  };
+  return $n_Lorg_scalajs_dom_package$
+}
 /** @constructor */
 function $c_jl_Class() {
   $c_O.call(this);
@@ -1812,6 +2152,44 @@ var $d_jl_Short = new $TypeData().initClass({
   return $isShort(x)
 }));
 /** @constructor */
+function $c_sci_Range$() {
+  $c_O.call(this);
+  this.MAX$undPRINT$1 = 0
+}
+$c_sci_Range$.prototype = new $h_O();
+$c_sci_Range$.prototype.constructor = $c_sci_Range$;
+/** @constructor */
+function $h_sci_Range$() {
+  /*<skip>*/
+}
+$h_sci_Range$.prototype = $c_sci_Range$.prototype;
+$c_sci_Range$.prototype.init___ = (function() {
+  this.MAX$undPRINT$1 = 512;
+  return this
+});
+$c_sci_Range$.prototype.description__p1__I__I__I__Z__T = (function(start, end, step, isInclusive) {
+  return ((((start + (isInclusive ? " to " : " until ")) + end) + " by ") + step)
+});
+$c_sci_Range$.prototype.scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$ = (function(start, end, step, isInclusive) {
+  throw new $c_jl_IllegalArgumentException().init___T((this.description__p1__I__I__I__Z__T(start, end, step, isInclusive) + ": seqs cannot contain more than Int.MaxValue elements."))
+});
+var $d_sci_Range$ = new $TypeData().initClass({
+  sci_Range$: 0
+}, false, "scala.collection.immutable.Range$", {
+  sci_Range$: 1,
+  O: 1,
+  s_Serializable: 1,
+  Ljava_io_Serializable: 1
+});
+$c_sci_Range$.prototype.$classData = $d_sci_Range$;
+var $n_sci_Range$ = (void 0);
+function $m_sci_Range$() {
+  if ((!$n_sci_Range$)) {
+    $n_sci_Range$ = new $c_sci_Range$().init___()
+  };
+  return $n_sci_Range$
+}
+/** @constructor */
 function $c_sjsr_RuntimeLong$() {
   $c_O.call(this);
   this.TwoPow32$1 = 0.0;
@@ -2473,6 +2851,32 @@ var $d_jl_ClassCastException = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 $c_jl_ClassCastException.prototype.$classData = $d_jl_ClassCastException;
+/** @constructor */
+function $c_jl_IllegalArgumentException() {
+  $c_jl_RuntimeException.call(this)
+}
+$c_jl_IllegalArgumentException.prototype = new $h_jl_RuntimeException();
+$c_jl_IllegalArgumentException.prototype.constructor = $c_jl_IllegalArgumentException;
+/** @constructor */
+function $h_jl_IllegalArgumentException() {
+  /*<skip>*/
+}
+$h_jl_IllegalArgumentException.prototype = $c_jl_IllegalArgumentException.prototype;
+$c_jl_IllegalArgumentException.prototype.init___T = (function(s) {
+  $c_jl_Throwable.prototype.init___T__jl_Throwable.call(this, s, null);
+  return this
+});
+var $d_jl_IllegalArgumentException = new $TypeData().initClass({
+  jl_IllegalArgumentException: 0
+}, false, "java.lang.IllegalArgumentException", {
+  jl_IllegalArgumentException: 1,
+  jl_RuntimeException: 1,
+  jl_Exception: 1,
+  jl_Throwable: 1,
+  O: 1,
+  Ljava_io_Serializable: 1
+});
+$c_jl_IllegalArgumentException.prototype.$classData = $d_jl_IllegalArgumentException;
 /** @constructor */
 function $c_jl_IndexOutOfBoundsException() {
   $c_jl_RuntimeException.call(this)
