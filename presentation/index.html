@@ -643,6 +643,192 @@ def optimizeInitialGreenScreenValues(): Unit = {
 
 <!-- ################################################################################################################ -->
 
+<section>
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Performance & Optimization
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Too many computations?
+
+  Greenscreen with better resolution would cause performance problems.
+
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ###  Possible solutions
+
+  * Better greenscreen algorithm
+  * Doing computations in the background
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ###  Multithreading in javascript?
+
+  <img src="imgs/not-sure.jpg" alt="Not sure if serious" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+### Asynchronous workflows in Scala.js
+
+* Futures
+* Async
+* Actors
+
+<br>
+#### Asynchronous does not mean parallel!
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+ ### Web workers?
+
+  Easy to implement and supported by all major browsers.
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+_greenscreen-worker.js:_
+<pre><code data-trim data-noescape>
+importScripts('../../../target/scala-2.11/augmented-reality-with-scala-js-fastopt.js');
+
+var greenscreen = new arjs.GreenScreen()
+
+onmessage = function (event) {
+  postMessage(greenscreen.calculateAndOptimize(
+    event.data.baseData,
+    event.data.backData,
+    event.data.canvasWidth));
+};
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  _Greenscreen.scala:_
+<pre><code data-trim data-noescape>
+// In class constructor
+val worker = new Worker("./src/main/javascript/greenscreen-worker.js")
+worker.onmessage = (event: Any) => ???
+
+@ScalaJSDefined @JSExport
+class GreenscreenMessage(
+  val baseData: Array[Int],
+  val backData: Array[Int],
+  val canvasWidth: Int) extends scala.scalajs.js.Object
+
+def calculateAndOptimize(
+  val baseData: Array[Int],
+  val backData: Array[Int],
+  val canvasWidth: Int): Array[Int] = ???
+
+// Somewhere in code
+worker.postMessage(new GreenscreenMessage(???, ???, ???))
+</code></pre>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### Web workers performance
+  * Do not send too many messages
+  * Big messages seems to work ok (~1Mb = no problem)
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  _https://github.com/pkukielka/radiance:_
+  <img src="imgs/radiance.jpg" alt="Radiance game" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### But...
+<blockquote>
+  If it ain't broke, don't fix it!
+</blockquote>
+<blockquote>
+  (...) premature optimization is the root of all evil.
+</blockquote>
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+<section>
+<section data-markdown data-state="background">
+<script type="text/template">
+  ## Back to object tracking
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+  ### We are going to cheat, remember?
+
+  With greenscreen it will be easy:
+
+  * We know which objects are moving
+  * We are filtering out color noise from the background
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+</script>
+</section>
+
+</section>
+
+<!-- ################################################################################################################ -->
+
+
 </div>
 </div>
 
