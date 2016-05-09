@@ -9,16 +9,28 @@
     <canvas id="canvas" width="1024" height="768"></canvas>
 
     <script type="text/javascript" src="src/main/javascript/adapter.js"></script>
+    <script type="text/javascript" src="src/main/javascript/fireball.js"></script>
     <script type="text/javascript" src="./target/scala-2.11/augmented-reality-with-scala-js-fastopt.js"></script>
     <script type="text/javascript">
       var video = document.querySelector('video');
       var canvas = document.getElementById('canvas');
 
+      var greenscreen = false;
+      var marker = false;
+
+      document.onkeypress = function(evt) {
+          evt = evt || window.event;
+          var charCode = evt.keyCode || evt.which;
+          var charStr = String.fromCharCode(charCode);
+          if (charStr == 'g') greenscreen = !greenscreen;
+          if (charStr == 'm') marker = !marker;
+      };
+
       video.addEventListener('play', function() {
         setTimeout(function() {
-          var camera = new arjs.Camera(video, canvas, true)
+          var camera = new arjs.Camera(video, canvas)
           setInterval(function() {
-            camera.drawOnCanvas()
+            camera.drawOnCanvas(greenscreen, marker)
           }, 20);
         }, 3000);
       }, false);

@@ -1069,7 +1069,6 @@ function $c_Larjs_Camera() {
   $c_O.call(this);
   this.video$1 = null;
   this.canvas$1 = null;
-  this.drawGreenScreen$1 = false;
   this.greenScreen$1 = null
 }
 $c_Larjs_Camera.prototype = new $h_O();
@@ -1079,25 +1078,40 @@ function $h_Larjs_Camera() {
   /*<skip>*/
 }
 $h_Larjs_Camera.prototype = $c_Larjs_Camera.prototype;
-$c_Larjs_Camera.prototype.drawOnCanvas__V = (function() {
-  var context = this.canvas$1.getContext("2d");
-  context.drawImage(this.video$1, 0.0, 0.0, $uI(this.canvas$1.width), $uI(this.canvas$1.height));
-  if (this.drawGreenScreen$1) {
-    this.greenScreen$1.drawGreenScreen__V()
-  }
+$c_Larjs_Camera.prototype.$$js$exported$meth$drawOnCanvas$default$2__Z = (function() {
+  return false
 });
-$c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__Z = (function(video, canvas, drawGreenScreen) {
+$c_Larjs_Camera.prototype.$$js$exported$meth$drawOnCanvas__Z__Z__O = (function(drawGreenScreen, drawMarker) {
+  this.drawOnCanvas__Z__Z__V(drawGreenScreen, drawMarker)
+});
+$c_Larjs_Camera.prototype.$$js$exported$meth$drawOnCanvas$default$1__Z = (function() {
+  return false
+});
+$c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement = (function(video, canvas) {
   this.video$1 = video;
   this.canvas$1 = canvas;
-  this.drawGreenScreen$1 = drawGreenScreen;
   this.greenScreen$1 = new $c_Larjs_GreenScreen().init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement(video, canvas);
   return this
 });
-$c_Larjs_Camera.prototype.$$js$exported$meth$drawOnCanvas__O = (function() {
-  this.drawOnCanvas__V()
+$c_Larjs_Camera.prototype.drawOnCanvas__Z__Z__V = (function(drawGreenScreen, drawMarker) {
+  var qual$1 = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.canvas$1);
+  var x$1 = this.video$1;
+  var x$4 = $uI(this.canvas$1.width);
+  var x$5 = $uI(this.canvas$1.height);
+  qual$1.drawImage(x$1, 0.0, 0.0, x$4, x$5);
+  this.greenScreen$1.drawGreenScreen__Z__Z__V(drawGreenScreen, drawMarker)
 });
 $c_Larjs_Camera.prototype.drawOnCanvas = (function() {
-  return this.$$js$exported$meth$drawOnCanvas__O()
+  var jsx$1 = (arguments.length | 0);
+  var jsx$2 = 0;
+  var arg$rest = [];
+  while ((jsx$2 < jsx$1)) {
+    arg$rest.push(arguments[jsx$2]);
+    jsx$2 = ((jsx$2 + 1) | 0)
+  };
+  var prep0 = ((arg$rest[0] === (void 0)) ? this.$$js$exported$meth$drawOnCanvas$default$1__Z() : $uZ(arg$rest[0]));
+  var prep1 = ((arg$rest[1] === (void 0)) ? this.$$js$exported$meth$drawOnCanvas$default$2__Z() : $uZ(arg$rest[1]));
+  return this.$$js$exported$meth$drawOnCanvas__Z__Z__O(prep0, prep1)
 });
 var $d_Larjs_Camera = new $TypeData().initClass({
   Larjs_Camera: 0
@@ -1108,12 +1122,11 @@ var $d_Larjs_Camera = new $TypeData().initClass({
 $c_Larjs_Camera.prototype.$classData = $d_Larjs_Camera;
 $e.arjs = ($e.arjs || {});
 /** @constructor */
-$e.arjs.Camera = (function(arg$1, arg$2, arg$3) {
+$e.arjs.Camera = (function(arg$1, arg$2) {
   var $thiz = new $c_Larjs_Camera();
   var prep0 = arg$1;
   var prep1 = arg$2;
-  var prep2 = $uZ(arg$3);
-  $c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement__Z.call($thiz, prep0, prep1, prep2);
+  $c_Larjs_Camera.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement.call($thiz, prep0, prep1);
   return $thiz
 });
 $e.arjs.Camera.prototype = $c_Larjs_Camera.prototype;
@@ -1128,7 +1141,8 @@ function $c_Larjs_GreenScreen() {
   this.downScaleFactor$1 = 0;
   this.baseCanvas$1 = null;
   this.backCanvas$1 = null;
-  this.greenScreen$1 = null
+  this.greenScreen$1 = null;
+  this.greenscreenWidth$1 = 0
 }
 $c_Larjs_GreenScreen.prototype = new $h_O();
 $c_Larjs_GreenScreen.prototype.constructor = $c_Larjs_GreenScreen;
@@ -1137,8 +1151,91 @@ function $h_Larjs_GreenScreen() {
   /*<skip>*/
 }
 $h_Larjs_GreenScreen.prototype = $c_Larjs_GreenScreen.prototype;
-$c_Larjs_GreenScreen.prototype.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D = (function(canvas) {
-  return canvas.getContext("2d")
+$c_Larjs_GreenScreen.prototype.drawGreenScreen__Z__Z__V = (function(drawGreenBackground, drawMarker) {
+  this.computeInitialValues__V();
+  this.optimizeInitialValues__V();
+  if (drawGreenBackground) {
+    var canvasImageData = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f).getImageData(0.0, 0.0, $uI(this.arjs$GreenScreen$$canvas$f.width), $uI(this.arjs$GreenScreen$$canvas$f.height));
+    var canvasData = canvasImageData.data;
+    var xs = this.greenScreen$1;
+    var end = xs.u.length;
+    var isEmpty$4 = (end <= 0);
+    var numRangeElements$4 = (isEmpty$4 ? 0 : end);
+    var lastElement$4 = (isEmpty$4 ? (-1) : (((-1) + end) | 0));
+    var terminalElement$4 = ((1 + lastElement$4) | 0);
+    if ((numRangeElements$4 < 0)) {
+      $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(0, end, 1, false)
+    };
+    var i = 0;
+    var count = 0;
+    while ((i !== terminalElement$4)) {
+      var i$1 = i;
+      var xbase = $imul(((i$1 % this.greenscreenWidth$1) | 0), this.downScaleFactor$1);
+      var ybase = $imul(((i$1 / this.greenscreenWidth$1) | 0), this.downScaleFactor$1);
+      if (this.greenScreen$1.u[i$1]) {
+        var end$1 = ((xbase + this.downScaleFactor$1) | 0);
+        var isEmpty$4$1 = (xbase >= end$1);
+        var numRangeElements$4$1 = (isEmpty$4$1 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end$1).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I(xbase)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end$1 - xbase) | 0)));
+        var lastElement$4$1 = (isEmpty$4$1 ? (((-1) + xbase) | 0) : (((-1) + end$1) | 0));
+        var terminalElement$4$1 = ((1 + lastElement$4$1) | 0);
+        if ((numRangeElements$4$1 < 0)) {
+          $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(xbase, end$1, 1, false)
+        };
+        var isCommonCase = ((xbase !== (-2147483648)) || (end$1 !== (-2147483648)));
+        var i$2 = xbase;
+        var count$1 = 0;
+        while ((isCommonCase ? (i$2 !== terminalElement$4$1) : (count$1 < numRangeElements$4$1))) {
+          var x = i$2;
+          var end$2 = ((ybase + this.downScaleFactor$1) | 0);
+          var isEmpty$4$2 = (ybase >= end$2);
+          var numRangeElements$4$2 = (isEmpty$4$2 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end$2).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I(ybase)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end$2 - ybase) | 0)));
+          var lastElement$4$2 = (isEmpty$4$2 ? (((-1) + ybase) | 0) : (((-1) + end$2) | 0));
+          var terminalElement$4$2 = ((1 + lastElement$4$2) | 0);
+          if ((numRangeElements$4$2 < 0)) {
+            $m_sci_Range$().scala$collection$immutable$Range$$fail__I__I__I__Z__sr_Nothing$(ybase, end$2, 1, false)
+          };
+          var isCommonCase$1 = ((ybase !== (-2147483648)) || (end$2 !== (-2147483648)));
+          var i$3 = ybase;
+          var count$2 = 0;
+          while ((isCommonCase$1 ? (i$3 !== terminalElement$4$2) : (count$2 < numRangeElements$4$2))) {
+            var v1 = i$3;
+            var pos = $imul(4, ((x + $imul(v1, $uI(this.arjs$GreenScreen$$canvas$f.width))) | 0));
+            canvasData[pos] = 0;
+            canvasData[((1 + pos) | 0)] = 200;
+            canvasData[((2 + pos) | 0)] = 0;
+            count$2 = ((1 + count$2) | 0);
+            i$3 = ((1 + i$3) | 0)
+          };
+          count$1 = ((1 + count$1) | 0);
+          i$2 = ((1 + i$2) | 0)
+        }
+      };
+      count = ((1 + count) | 0);
+      i = ((1 + i) | 0)
+    };
+    var qual$3 = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f);
+    qual$3.putImageData(canvasImageData, 0.0, 0.0)
+  };
+  if (drawMarker) {
+    var x1 = this.getColorCenterPoint__I__I__T2(0, 130);
+    if ((x1 !== null)) {
+      var redX = x1.$$und1$mcD$sp__D();
+      var redY = x1.$$und2$mcD$sp__D();
+      var x$4_$_$$und1$f = null;
+      var x$4_$_$$und2$f = null;
+      var x$4_$_$$und1$mcD$sp$f = redX;
+      var x$4_$_$$und2$mcD$sp$f = redY
+    } else {
+      var x$4_$_$$und1$f;
+      var x$4_$_$$und2$f;
+      var x$4_$_$$und1$mcD$sp$f;
+      var x$4_$_$$und2$mcD$sp$f;
+      throw new $c_s_MatchError().init___O(x1)
+    };
+    var redX$2 = x$4_$_$$und1$mcD$sp$f;
+    var redY$2 = x$4_$_$$und2$mcD$sp$f;
+    $g.drawFireball(this.arjs$GreenScreen$$canvas$f, $doubleToInt(redX$2), $doubleToInt(redY$2))
+  }
 });
 $c_Larjs_GreenScreen.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lorg_scalajs_dom_raw_HTMLCanvasElement = (function(video, canvas) {
   this.video$1 = video;
@@ -1150,14 +1247,15 @@ $c_Larjs_GreenScreen.prototype.init___Lorg_scalajs_dom_raw_HTMLVideoElement__Lor
   this.baseCanvas$1 = this.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement();
   this.backCanvas$1 = this.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement();
   this.greenScreen$1 = $newArrayObject($d_Z.getArrayOf(), [$imul($uI(this.baseCanvas$1.width), $uI(this.baseCanvas$1.height))]);
+  this.greenscreenWidth$1 = $uI(this.baseCanvas$1.width);
   return this
 });
 $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
   var i = 1;
   var count = 0;
   while ((i !== 3)) {
-    var $$this = $uI(this.baseCanvas$1.width);
-    var end = ((this.greenScreen$1.u.length - $uI(this.baseCanvas$1.width)) | 0);
+    var $$this = this.greenscreenWidth$1;
+    var end = ((this.greenScreen$1.u.length - this.greenscreenWidth$1) | 0);
     var isEmpty$4 = ($$this >= end);
     var numRangeElements$4 = (isEmpty$4 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I($$this)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end - $$this) | 0)));
     var lastElement$4 = (isEmpty$4 ? (((-1) + $$this) | 0) : (((-1) + end) | 0));
@@ -1170,12 +1268,12 @@ $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
     var count$1 = 0;
     while ((isCommonCase ? (i$2 !== terminalElement$4) : (count$1 < numRangeElements$4))) {
       var i$3 = i$2;
-      var x$1 = ((i$3 % $uI(this.baseCanvas$1.width)) | 0);
-      var y = ((i$3 / $uI(this.baseCanvas$1.width)) | 0);
+      var x$1 = ((i$3 % this.greenscreenWidth$1) | 0);
+      var y = ((i$3 / this.greenscreenWidth$1) | 0);
       var x$2 = (((-1) + x$1) | 0);
-      if (this.greenScreen$1.u[((x$2 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)]) {
+      if (this.greenScreen$1.u[((x$2 + $imul(y, this.greenscreenWidth$1)) | 0)]) {
         var x$3 = ((1 + x$1) | 0);
-        var jsx$2 = this.greenScreen$1.u[((x$3 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)]
+        var jsx$2 = this.greenScreen$1.u[((x$3 + $imul(y, this.greenscreenWidth$1)) | 0)]
       } else {
         var jsx$2 = false
       };
@@ -1183,9 +1281,9 @@ $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
         var jsx$1 = true
       } else {
         var y$1 = (((-1) + y) | 0);
-        if (this.greenScreen$1.u[((x$1 + $imul(y$1, $uI(this.baseCanvas$1.width))) | 0)]) {
+        if (this.greenScreen$1.u[((x$1 + $imul(y$1, this.greenscreenWidth$1)) | 0)]) {
           var y$2 = ((1 + y) | 0);
-          var jsx$1 = this.greenScreen$1.u[((x$1 + $imul(y$2, $uI(this.baseCanvas$1.width))) | 0)]
+          var jsx$1 = this.greenScreen$1.u[((x$1 + $imul(y$2, this.greenscreenWidth$1)) | 0)]
         } else {
           var jsx$1 = false
         }
@@ -1194,9 +1292,9 @@ $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
         this.greenScreen$1.u[i$3] = true
       };
       var x$4 = (((-1) + x$1) | 0);
-      if ((!this.greenScreen$1.u[((x$4 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)])) {
+      if ((!this.greenScreen$1.u[((x$4 + $imul(y, this.greenscreenWidth$1)) | 0)])) {
         var x$5 = ((1 + x$1) | 0);
-        var jsx$4 = (!this.greenScreen$1.u[((x$5 + $imul(y, $uI(this.baseCanvas$1.width))) | 0)])
+        var jsx$4 = (!this.greenScreen$1.u[((x$5 + $imul(y, this.greenscreenWidth$1)) | 0)])
       } else {
         var jsx$4 = false
       };
@@ -1204,9 +1302,9 @@ $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
         var jsx$3 = true
       } else {
         var y$3 = (((-1) + y) | 0);
-        if ((!this.greenScreen$1.u[((x$1 + $imul(y$3, $uI(this.baseCanvas$1.width))) | 0)])) {
+        if ((!this.greenScreen$1.u[((x$1 + $imul(y$3, this.greenscreenWidth$1)) | 0)])) {
           var y$4 = ((1 + y) | 0);
-          var jsx$3 = (!this.greenScreen$1.u[((x$1 + $imul(y$4, $uI(this.baseCanvas$1.width))) | 0)])
+          var jsx$3 = (!this.greenScreen$1.u[((x$1 + $imul(y$4, this.greenscreenWidth$1)) | 0)])
         } else {
           var jsx$3 = false
         }
@@ -1221,10 +1319,14 @@ $c_Larjs_GreenScreen.prototype.optimizeInitialValues__V = (function() {
     i = ((1 + i) | 0)
   }
 });
-$c_Larjs_GreenScreen.prototype.drawGreenScreen__V = (function() {
-  this.computeInitialValues__V();
-  this.optimizeInitialValues__V();
-  var canvasImageData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f).getImageData(0.0, 0.0, $uI(this.arjs$GreenScreen$$canvas$f.width), $uI(this.arjs$GreenScreen$$canvas$f.height));
+$c_Larjs_GreenScreen.prototype.getColorCenterPoint__I__I__T2 = (function(colourBitIndex, threshold) {
+  var elem$1 = 0.0;
+  elem$1 = 0.0;
+  var elem$1$1 = 0.0;
+  elem$1$1 = 0.0;
+  var elem$1$2 = 0;
+  elem$1$2 = 0;
+  var canvasImageData = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f).getImageData(0.0, 0.0, $uI(this.arjs$GreenScreen$$canvas$f.width), $uI(this.arjs$GreenScreen$$canvas$f.height));
   var canvasData = canvasImageData.data;
   var xs = this.greenScreen$1;
   var end = xs.u.length;
@@ -1239,9 +1341,9 @@ $c_Larjs_GreenScreen.prototype.drawGreenScreen__V = (function() {
   var count = 0;
   while ((i !== terminalElement$4)) {
     var i$1 = i;
-    var xbase = $imul(((i$1 % $uI(this.baseCanvas$1.width)) | 0), this.downScaleFactor$1);
-    var ybase = $imul(((i$1 / $uI(this.baseCanvas$1.width)) | 0), this.downScaleFactor$1);
-    if (this.greenScreen$1.u[i$1]) {
+    var xbase = $imul(((i$1 % this.greenscreenWidth$1) | 0), this.downScaleFactor$1);
+    var ybase = $imul(((i$1 / this.greenscreenWidth$1) | 0), this.downScaleFactor$1);
+    if ((!this.greenScreen$1.u[i$1])) {
       var end$1 = ((xbase + this.downScaleFactor$1) | 0);
       var isEmpty$4$1 = (xbase >= end$1);
       var numRangeElements$4$1 = (isEmpty$4$1 ? 0 : (new $c_sjsr_RuntimeLong().init___I(end$1).$$minus__sjsr_RuntimeLong__sjsr_RuntimeLong(new $c_sjsr_RuntimeLong().init___I(xbase)).$$greater__sjsr_RuntimeLong__Z(new $c_sjsr_RuntimeLong().init___I__I(2147483647, 0)) ? (-1) : ((end$1 - xbase) | 0)));
@@ -1269,9 +1371,14 @@ $c_Larjs_GreenScreen.prototype.drawGreenScreen__V = (function() {
         while ((isCommonCase$1 ? (i$3 !== terminalElement$4$2) : (count$2 < numRangeElements$4$2))) {
           var v1 = i$3;
           var pos = $imul(4, ((x + $imul(v1, $uI(this.arjs$GreenScreen$$canvas$f.width))) | 0));
-          canvasData[pos] = 0;
-          canvasData[((1 + pos) | 0)] = 200;
-          canvasData[((2 + pos) | 0)] = 0;
+          var mainColor = $uI(canvasData[((pos + ((colourBitIndex % 3) | 0)) | 0)]);
+          var secondColor = $uI(canvasData[((pos + ((((1 + colourBitIndex) | 0) % 3) | 0)) | 0)]);
+          var thirdColor = $uI(canvasData[((pos + ((((2 + colourBitIndex) | 0) % 3) | 0)) | 0)]);
+          if ((((mainColor > threshold) && (secondColor < (0.7 * mainColor))) && (thirdColor < (0.7 * mainColor)))) {
+            elem$1 = (elem$1 + x);
+            elem$1$1 = (elem$1$1 + v1);
+            elem$1$2 = ((1 + elem$1$2) | 0)
+          };
           count$2 = ((1 + count$2) | 0);
           i$3 = ((1 + i$3) | 0)
         };
@@ -1282,28 +1389,27 @@ $c_Larjs_GreenScreen.prototype.drawGreenScreen__V = (function() {
     count = ((1 + count) | 0);
     i = ((1 + i) | 0)
   };
-  var qual$3 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.arjs$GreenScreen$$canvas$f);
-  qual$3.putImageData(canvasImageData, 0.0, 0.0)
+  return ((elem$1$2 > 1) ? new $c_s_Tuple2$mcDD$sp().init___D__D((elem$1 / elem$1$2), (elem$1$1 / elem$1$2)) : new $c_s_Tuple2$mcDD$sp().init___D__D((-1000.0), (-1000.0)))
 });
 $c_Larjs_GreenScreen.prototype.createDownscaledCanvas__Lorg_scalajs_dom_raw_HTMLCanvasElement = (function() {
   var downscaledCanvas = $m_Lorg_scalajs_dom_package$().document__Lorg_scalajs_dom_raw_HTMLDocument().createElement("canvas");
   downscaledCanvas.width = (($uI(this.arjs$GreenScreen$$canvas$f.width) / this.downScaleFactor$1) | 0);
   downscaledCanvas.height = (($uI(this.arjs$GreenScreen$$canvas$f.height) / this.downScaleFactor$1) | 0);
-  var qual$1 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(downscaledCanvas);
-  var x$3 = this.video$1;
-  var x$6 = $uI(downscaledCanvas.width);
-  var x$7 = $uI(downscaledCanvas.height);
-  qual$1.drawImage(x$3, 0.0, 0.0, x$6, x$7);
+  var qual$1 = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(downscaledCanvas);
+  var x$5 = this.video$1;
+  var x$8 = $uI(downscaledCanvas.width);
+  var x$9 = $uI(downscaledCanvas.height);
+  qual$1.drawImage(x$5, 0.0, 0.0, x$8, x$9);
   return downscaledCanvas
 });
 $c_Larjs_GreenScreen.prototype.computeInitialValues__V = (function() {
-  var qual$2 = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1);
-  var x$12 = this.video$1;
-  var x$15 = $uI(this.backCanvas$1.width);
-  var x$16 = $uI(this.backCanvas$1.height);
-  qual$2.drawImage(x$12, 0.0, 0.0, x$15, x$16);
-  var backData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1).getImageData(0.0, 0.0, $uI(this.backCanvas$1.width), $uI(this.backCanvas$1.height)).data;
-  var baseData = this.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.baseCanvas$1).getImageData(0.0, 0.0, $uI(this.baseCanvas$1.width), $uI(this.baseCanvas$1.height)).data;
+  var qual$2 = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1);
+  var x$14 = this.video$1;
+  var x$17 = $uI(this.backCanvas$1.width);
+  var x$18 = $uI(this.backCanvas$1.height);
+  qual$2.drawImage(x$14, 0.0, 0.0, x$17, x$18);
+  var backData = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.backCanvas$1).getImageData(0.0, 0.0, $uI(this.backCanvas$1.width), $uI(this.backCanvas$1.height)).data;
+  var baseData = $m_Larjs_package$().canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D(this.baseCanvas$1).getImageData(0.0, 0.0, $uI(this.baseCanvas$1.width), $uI(this.baseCanvas$1.height)).data;
   var end = $uI(baseData.length);
   var isEmpty$4 = (end <= 0);
   var numRangeElements$4 = (isEmpty$4 ? 0 : end);
@@ -1368,6 +1474,37 @@ var $d_Larjs_GreenScreen = new $TypeData().initClass({
   O: 1
 });
 $c_Larjs_GreenScreen.prototype.$classData = $d_Larjs_GreenScreen;
+/** @constructor */
+function $c_Larjs_package$() {
+  $c_O.call(this)
+}
+$c_Larjs_package$.prototype = new $h_O();
+$c_Larjs_package$.prototype.constructor = $c_Larjs_package$;
+/** @constructor */
+function $h_Larjs_package$() {
+  /*<skip>*/
+}
+$h_Larjs_package$.prototype = $c_Larjs_package$.prototype;
+$c_Larjs_package$.prototype.init___ = (function() {
+  return this
+});
+$c_Larjs_package$.prototype.canvasToContext__Lorg_scalajs_dom_raw_HTMLCanvasElement__Lorg_scalajs_dom_raw_CanvasRenderingContext2D = (function(canvas) {
+  return canvas.getContext("2d")
+});
+var $d_Larjs_package$ = new $TypeData().initClass({
+  Larjs_package$: 0
+}, false, "arjs.package$", {
+  Larjs_package$: 1,
+  O: 1
+});
+$c_Larjs_package$.prototype.$classData = $d_Larjs_package$;
+var $n_Larjs_package$ = (void 0);
+function $m_Larjs_package$() {
+  if ((!$n_Larjs_package$)) {
+    $n_Larjs_package$ = new $c_Larjs_package$().init___()
+  };
+  return $n_Larjs_package$
+}
 /** @constructor */
 function $c_Lorg_scalajs_dom_package$() {
   $c_O.call(this);
@@ -1558,6 +1695,21 @@ function $isArrayOf_jl_Number(obj, depth) {
 }
 function $asArrayOf_jl_Number(obj, depth) {
   return (($isArrayOf_jl_Number(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ljava.lang.Number;", depth))
+}
+function $s_s_Product2$class__productElement__s_Product2__I__O($$this, n) {
+  switch (n) {
+    case 0: {
+      return $$this.$$und1__O();
+      break
+    }
+    case 1: {
+      return $$this.$$und2__O();
+      break
+    }
+    default: {
+      throw new $c_jl_IndexOutOfBoundsException().init___T(("" + n))
+    }
+  }
 }
 /** @constructor */
 function $c_s_util_hashing_MurmurHash3() {
@@ -2904,6 +3056,98 @@ var $d_jl_IndexOutOfBoundsException = new $TypeData().initClass({
 });
 $c_jl_IndexOutOfBoundsException.prototype.$classData = $d_jl_IndexOutOfBoundsException;
 /** @constructor */
+function $c_s_MatchError() {
+  $c_jl_RuntimeException.call(this);
+  this.obj$4 = null;
+  this.objString$4 = null;
+  this.bitmap$0$4 = false
+}
+$c_s_MatchError.prototype = new $h_jl_RuntimeException();
+$c_s_MatchError.prototype.constructor = $c_s_MatchError;
+/** @constructor */
+function $h_s_MatchError() {
+  /*<skip>*/
+}
+$h_s_MatchError.prototype = $c_s_MatchError.prototype;
+$c_s_MatchError.prototype.objString$lzycompute__p4__T = (function() {
+  if ((!this.bitmap$0$4)) {
+    this.objString$4 = ((this.obj$4 === null) ? "null" : this.liftedTree1$1__p4__T());
+    this.bitmap$0$4 = true
+  };
+  return this.objString$4
+});
+$c_s_MatchError.prototype.ofClass$1__p4__T = (function() {
+  return ("of class " + $objectGetClass(this.obj$4).getName__T())
+});
+$c_s_MatchError.prototype.liftedTree1$1__p4__T = (function() {
+  try {
+    return ((($objectToString(this.obj$4) + " (") + this.ofClass$1__p4__T()) + ")")
+  } catch (e) {
+    var e$2 = $m_sjsr_package$().wrapJavaScriptException__O__jl_Throwable(e);
+    if ((e$2 !== null)) {
+      return ("an instance " + this.ofClass$1__p4__T())
+    } else {
+      throw e
+    }
+  }
+});
+$c_s_MatchError.prototype.getMessage__T = (function() {
+  return this.objString__p4__T()
+});
+$c_s_MatchError.prototype.objString__p4__T = (function() {
+  return ((!this.bitmap$0$4) ? this.objString$lzycompute__p4__T() : this.objString$4)
+});
+$c_s_MatchError.prototype.init___O = (function(obj) {
+  this.obj$4 = obj;
+  $c_jl_Throwable.prototype.init___T__jl_Throwable.call(this, null, null);
+  return this
+});
+var $d_s_MatchError = new $TypeData().initClass({
+  s_MatchError: 0
+}, false, "scala.MatchError", {
+  s_MatchError: 1,
+  jl_RuntimeException: 1,
+  jl_Exception: 1,
+  jl_Throwable: 1,
+  O: 1,
+  Ljava_io_Serializable: 1
+});
+$c_s_MatchError.prototype.$classData = $d_s_MatchError;
+/** @constructor */
+function $c_T2() {
+  $c_O.call(this);
+  this.$$und1$f = null;
+  this.$$und2$f = null
+}
+$c_T2.prototype = new $h_O();
+$c_T2.prototype.constructor = $c_T2;
+/** @constructor */
+function $h_T2() {
+  /*<skip>*/
+}
+$h_T2.prototype = $c_T2.prototype;
+$c_T2.prototype.productPrefix__T = (function() {
+  return "Tuple2"
+});
+$c_T2.prototype.productArity__I = (function() {
+  return 2
+});
+$c_T2.prototype.init___O__O = (function(_1, _2) {
+  this.$$und1$f = _1;
+  this.$$und2$f = _2;
+  return this
+});
+$c_T2.prototype.productElement__I__O = (function(n) {
+  return $s_s_Product2$class__productElement__s_Product2__I__O(this, n)
+});
+$c_T2.prototype.toString__T = (function() {
+  return (((("(" + this.$$und1__O()) + ",") + this.$$und2__O()) + ")")
+});
+$c_T2.prototype.hashCode__I = (function() {
+  var this$2 = $m_s_util_hashing_MurmurHash3$();
+  return this$2.productHash__s_Product__I__I(this, (-889275714))
+});
+/** @constructor */
 function $c_sjsr_UndefinedBehaviorError() {
   $c_jl_Error.call(this)
 }
@@ -2937,6 +3181,51 @@ var $d_sjsr_UndefinedBehaviorError = new $TypeData().initClass({
   s_util_control_NoStackTrace: 1
 });
 $c_sjsr_UndefinedBehaviorError.prototype.$classData = $d_sjsr_UndefinedBehaviorError;
+/** @constructor */
+function $c_s_Tuple2$mcDD$sp() {
+  $c_T2.call(this);
+  this.$$und1$mcD$sp$f = 0.0;
+  this.$$und2$mcD$sp$f = 0.0
+}
+$c_s_Tuple2$mcDD$sp.prototype = new $h_T2();
+$c_s_Tuple2$mcDD$sp.prototype.constructor = $c_s_Tuple2$mcDD$sp;
+/** @constructor */
+function $h_s_Tuple2$mcDD$sp() {
+  /*<skip>*/
+}
+$h_s_Tuple2$mcDD$sp.prototype = $c_s_Tuple2$mcDD$sp.prototype;
+$c_s_Tuple2$mcDD$sp.prototype.$$und1$mcD$sp__D = (function() {
+  return this.$$und1$mcD$sp$f
+});
+$c_s_Tuple2$mcDD$sp.prototype.$$und2__O = (function() {
+  return this.$$und2$mcD$sp$f
+});
+$c_s_Tuple2$mcDD$sp.prototype.$$und2$mcD$sp__D = (function() {
+  return this.$$und2$mcD$sp$f
+});
+$c_s_Tuple2$mcDD$sp.prototype.init___D__D = (function(_1$mcD$sp, _2$mcD$sp) {
+  this.$$und1$mcD$sp$f = _1$mcD$sp;
+  this.$$und2$mcD$sp$f = _2$mcD$sp;
+  $c_T2.prototype.init___O__O.call(this, null, null);
+  return this
+});
+$c_s_Tuple2$mcDD$sp.prototype.$$und1__O = (function() {
+  return this.$$und1$mcD$sp$f
+});
+var $d_s_Tuple2$mcDD$sp = new $TypeData().initClass({
+  s_Tuple2$mcDD$sp: 0
+}, false, "scala.Tuple2$mcDD$sp", {
+  s_Tuple2$mcDD$sp: 1,
+  T2: 1,
+  O: 1,
+  s_Product2: 1,
+  s_Product: 1,
+  s_Equals: 1,
+  s_Serializable: 1,
+  Ljava_io_Serializable: 1,
+  s_Product2$mcDD$sp: 1
+});
+$c_s_Tuple2$mcDD$sp.prototype.$classData = $d_s_Tuple2$mcDD$sp;
 /** @constructor */
 function $c_sjs_js_JavaScriptException() {
   $c_jl_RuntimeException.call(this);
