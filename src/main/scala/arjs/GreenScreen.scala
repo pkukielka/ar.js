@@ -14,13 +14,28 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
   val deltaSingleColor = 35
   val deltaValueMin = 0.85
   val deltaValueMax = 1.15
-  val downScaleFactor = 6
+  val downScaleFactor = 5
 
   val baseCanvas: html.Canvas = createDownscaledCanvas()
   val backCanvas: html.Canvas = createDownscaledCanvas()
   val greenScreen = new Array[Boolean](baseCanvas.width * baseCanvas.height)
   val greenscreenWidth = baseCanvas.width
-  
+
+  val lightsaber =  dom.document.createElement("img").asInstanceOf[html.Image]
+  lightsaber.src = "presentation/imgs/ls.png"
+
+  val lightsaberBase =  dom.document.createElement("img").asInstanceOf[html.Image]
+  lightsaberBase.src = "presentation/imgs/ls-base.png"
+
+  val swBg = dom.document.createElement("img").asInstanceOf[html.Image]
+  swBg.src = "presentation/imgs/sw-bg3.jpg"
+  val swBgCanvas = dom.document.createElement("canvas").asInstanceOf[html.Canvas]
+  swBgCanvas.width = canvas.width
+  swBgCanvas.height = canvas.height
+  swBgCanvas.drawImage(swBg, 0, 0, swBgCanvas.width, swBgCanvas.height)
+  val swBgCanvasData = swBgCanvas.getImageData(0, 0, swBgCanvas.width, swBgCanvas.height).data
+
+
   def createDownscaledCanvas() = {
     val downscaledCanvas = dom.document.createElement("canvas").asInstanceOf[html.Canvas]
     downscaledCanvas.width = canvas.width / downScaleFactor
@@ -65,6 +80,25 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
     }
   }
 
+  def forPixels(forGreenscreen : Boolean)(f: (js.Array[Int], Int, Int) => Unit) = {
+    val canvasImageData = canvas.getImageData(0, 0, canvas.width, canvas.height)
+    val canvasData = canvasImageData.data
+
+    for (i <- greenScreen.indices) {
+      val xbase = (i % greenscreenWidth) * downScaleFactor
+      val ybase = (i / greenscreenWidth) * downScaleFactor
+
+      if (greenScreen(i) == forGreenscreen) {
+        for {
+          x <- xbase until xbase + downScaleFactor
+          y <- ybase until ybase + downScaleFactor
+        } f(canvasData, x, y)
+      }
+    }
+
+    canvasImageData
+  }
+
   def getColorCenterPoint(colourBitIndex: Int, threshold: Int) = {
     var (sumX, sumY) = (0.0, 0.0)
     var pixelsCount = 0
@@ -85,23 +119,38 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
     if (pixelsCount > 1) (sumX / pixelsCount, sumY / pixelsCount) else (-1000.0, -1000.0)
   }
 
-  def forPixels(forGreenscreen : Boolean)(f: (js.Array[Int], Int, Int) => Unit) = {
-    val canvasImageData = canvas.getImageData(0, 0, canvas.width, canvas.height)
-    val canvasData = canvasImageData.data
+  def drawLightsaber(): Unit = {
+    val thresholdR = 100
+    val thresholdG = 100
 
-    for (i <- greenScreen.indices) {
-      val xbase = (i % greenscreenWidth) * downScaleFactor
-      val ybase = (i / greenscreenWidth) * downScaleFactor
+    val (redX, redY) = getColorCenterPoint(0, thresholdR)
+    val (greenX, greenY) = getColorCenterPoint(2, thresholdG)
+    val width = redX - greenX
+    val height = redY - greenY
+    val length = 15 * Math.sqrt(width*width + height*height)
+    val angle = Math.atan2(-height, -width) - (Math.PI / 2)
+    canvas.fillRect(redX, redY, 10, 10)
+    canvas.fillRect(greenX, greenY, 10, 10)
 
-      if (greenScreen(i) == forGreenscreen) {
-        for {
-          x <- xbase until xbase + downScaleFactor
-          y <- ybase until ybase + downScaleFactor
-        } f(canvasData, x, y)
-      }
+    if (length < 1500 && length > 100) {
+      canvas.save()
+      canvas.translate(redX, redY)
+      canvas.rotate(angle)
+      canvas.drawImage(lightsaber, -length / 8, -length, length / 4, length)
+      canvas.drawImage(lightsaberBase, -length / 24, -length / 8, length / 12, length / 4)
+      canvas.restore()
     }
+  }
 
-    canvasImageData
+  def drawBackground(): Unit = {
+    val canvasImageData =  forPixels(forGreenscreen = true) {
+      (canvasData, x, y) =>
+        val pos = (x + (y * canvas.width)) * 4
+        canvasData(pos) = swBgCanvasData(pos)
+        canvasData(pos + 1) = swBgCanvasData(pos + 1)
+        canvasData(pos + 2) = swBgCanvasData(pos + 2)
+    }
+    canvas.putImageData(canvasImageData, 0, 0)
   }
 
   def drawGreenScreen(drawGreenBackground: Boolean, drawMarker: Boolean): Unit = {
@@ -119,6 +168,7 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
       canvas.putImageData(canvasImageData, 0, 0)
     }
 
+   drawLightsaber()
 
     if (drawMarker) {
       val (redX, redY) = getColorCenterPoint(0, 130)
