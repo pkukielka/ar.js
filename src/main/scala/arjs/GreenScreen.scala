@@ -10,6 +10,12 @@ object DOMGlobalScope extends js.GlobalScope {
   def drawFireball(canvas: html.Canvas, mouseX: Int, mouseY: Int): Unit = js.native
 }
 
+@js.native
+trait Howl extends js.Object {
+  def play(): Unit = js.native
+  def stop(): Unit = js.native
+}
+
 class GreenScreen(video: html.Video, canvas: html.Canvas) {
   val deltaSingleColor = 35
   val deltaValueMin = 0.85
@@ -22,19 +28,19 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
   val greenscreenWidth = baseCanvas.width
 
   val lightsaber =  dom.document.createElement("img").asInstanceOf[html.Image]
-  lightsaber.src = "presentation/imgs/ls.png"
+  lightsaber.src = "imgs/ls.png"
 
   val lightsaberBase =  dom.document.createElement("img").asInstanceOf[html.Image]
-  lightsaberBase.src = "presentation/imgs/ls-base.png"
+  lightsaberBase.src = "imgs/ls-base.png"
 
-  val swBg = dom.document.createElement("img").asInstanceOf[html.Image]
-  swBg.src = "presentation/imgs/sw-bg3.jpg"
-  val swBgCanvas = dom.document.createElement("canvas").asInstanceOf[html.Canvas]
-  swBgCanvas.width = canvas.width
-  swBgCanvas.height = canvas.height
-  swBgCanvas.drawImage(swBg, 0, 0, swBgCanvas.width, swBgCanvas.height)
-  val swBgCanvasData = swBgCanvas.getImageData(0, 0, swBgCanvas.width, swBgCanvas.height).data
+  val lightsaberOn = js.eval("new Howl({ urls: ['snd/SaberOn.wav'] })").asInstanceOf[Howl]
+  val lightsaberHum = js.eval("new Howl({ urls: ['snd/Hum.wav'], loop: true })").asInstanceOf[Howl]
+  val lightsaberSwings = (1 to 6).map(i => js.eval(s"new Howl({ urls: ['snd/Swing0$i.wav'] })").asInstanceOf[Howl])
+  val lightsaberSpin = js.eval("new Howl({ urls: ['snd/Hum.wav'], loop: true })").asInstanceOf[Howl]
 
+  var isLightsaberOn = false
+  var lightsaberPositions = Array.fill[Double](15)(0)
+  var frameIndex = 0
 
   def createDownscaledCanvas() = {
     val downscaledCanvas = dom.document.createElement("canvas").asInstanceOf[html.Canvas]
@@ -133,27 +139,33 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
     canvas.fillRect(greenX, greenY, 10, 10)
 
     if (length < 1500 && length > 100) {
+      if (!isLightsaberOn) {
+        lightsaberOn.play()
+        lightsaberHum.play()
+        isLightsaberOn = true
+      }
+
+      if (Math.abs(lightsaberPositions(frameIndex) - angle) > Math.PI / 3) {
+        lightsaberSwings(scala.util.Random.nextInt(lightsaberSwings.length)).play()
+        for (i <- 0 until 10) lightsaberPositions.update(i, angle)
+      }
+      lightsaberPositions(frameIndex) = angle
+      frameIndex = (frameIndex + 1) % lightsaberPositions.length
+
       canvas.save()
       canvas.translate(redX, redY)
       canvas.rotate(angle)
       canvas.drawImage(lightsaber, -length / 8, -length, length / 4, length)
       canvas.drawImage(lightsaberBase, -length / 24, -length / 8, length / 12, length / 4)
       canvas.restore()
+    } else if (isLightsaberOn) {
+        lightsaberOn.play()
+        lightsaberHum.stop()
+        isLightsaberOn = false
     }
   }
 
-  def drawBackground(): Unit = {
-    val canvasImageData =  forPixels(forGreenscreen = true) {
-      (canvasData, x, y) =>
-        val pos = (x + (y * canvas.width)) * 4
-        canvasData(pos) = swBgCanvasData(pos)
-        canvasData(pos + 1) = swBgCanvasData(pos + 1)
-        canvasData(pos + 2) = swBgCanvasData(pos + 2)
-    }
-    canvas.putImageData(canvasImageData, 0, 0)
-  }
-
-  def drawGreenScreen(drawGreenBackground: Boolean, drawMarker: Boolean): Unit = {
+  def drawGreenScreen(drawGreenBackground: Boolean, drawMarker: Boolean, drawLs: Boolean): Unit = {
     computeInitialValues()
     optimizeInitialValues()
 
@@ -168,7 +180,7 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
       canvas.putImageData(canvasImageData, 0, 0)
     }
 
-   drawLightsaber()
+    if (drawLs) drawLightsaber()
 
     if (drawMarker) {
       val (redX, redY) = getColorCenterPoint(0, 130)

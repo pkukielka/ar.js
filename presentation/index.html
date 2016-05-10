@@ -22,7 +22,7 @@
 		}
 
     html.background body {
-      background:url("imgs/background.jpg");
+      background:url("imgs/geecon-01.jpg");
       background-position:center;
       background-size: 100%;
     }
@@ -50,9 +50,10 @@
   <script type="text/javascript" src="js/ar.js/fireball.js"></script>
   <script type="text/javascript" src="js/ar.js/adapter.js"></script>
   <script type="text/javascript" src="js/ar.js/camera.js"></script>
+  <script type="text/javascript" src="js/howler.min.js"></script>
 </head>
 
-<body>
+<body>>
 
 <video hidden autoplay></video>
 
@@ -469,13 +470,15 @@ object Camera {
 
 <section data-markdown data-state="background">
 <script type="text/template">
-  <img src="imgs/chameleon1.jpg" alt="Hard to notice chameleon" style="background: none; border: none; box-shadow: none"/>
+  ### Where's Wally?
+  <img src="imgs/chameleon1.png" alt="Hard to notice chameleon" style="background: none; border: none; box-shadow: none"/>
 </script>
 </section>
 
 <section data-markdown data-state="background">
 <script type="text/template">
-  <img src="imgs/chameleon2.jpg" alt="Easy to notice chameleon" style="background: none; border: none; box-shadow: none"/>
+  ### Now better
+  <img src="imgs/chameleon2.png" alt="Easy to notice chameleon" style="background: none; border: none; box-shadow: none"/>
 </script>
 </section>
 
@@ -483,7 +486,7 @@ object Camera {
 <script type="text/template">
   ### Solution: Greenscreen
 
-  <img src="imgs/greenscreen-lotr.jpg" alt="Greenscreen used during filming LotR" style="background: none; border: none; box-shadow: none"/>
+  <img src="imgs/greenscreen-lotr.png" alt="Greenscreen used during filming LotR" style="background: none; border: none; box-shadow: none"/>
 </script>
 </section>
 
@@ -887,12 +890,43 @@ object DOMGlobalScope extends js.GlobalScope {
 
 <section data-markdown data-state="background">
 <script type="text/template">
+### Any other cool ideas?
+</script>
+</section>
 
+<section data-markdown data-state="background">
+<script type="text/template">
+<canvas id="ls" width="800" height="600"></canvas>
 </script>
 </section>
 
 </section>
+<!-- ################################################################################################################ -->
+<section>
 
+<section data-markdown data-state="background">
+<script type="text/template">
+## Questions & Answers
+</script>
+</section>
+
+<section data-markdown data-state="background">
+<script type="text/template">
+### Piotr Kukiełka
+
+piotr.kukielka@gmail.com
+
+<div style="margin-left: 36% text-align: left;">
+<img src="imgs/gh.png" style="background: none; border: none; margin: 0px"> pkukielka
+<br>
+<img src="imgs/twitter.png" style="background: none; border: none; margin: 0px"> pkukielka
+</div>
+
+<img src="imgs/vl.png" alt="Virtus Lab" style="background: none; border: none; box-shadow: none"/>
+</script>
+</section>
+
+</section>
 <!-- ################################################################################################################ -->
 
 
@@ -932,13 +966,15 @@ object DOMGlobalScope extends js.GlobalScope {
 
     var greenscreen = false;
     var marker = false;
+    var lightsaber = false;
 
     document.onkeypress = function(evt) {
         evt = evt || window.event;
         var charCode = evt.keyCode || evt.which;
         var charStr = String.fromCharCode(charCode);
-        if (charStr == 'g') greenscreen = !greenscreen;
-        if (charStr == 'm') marker = !marker;
+        if (charStr == '1') greenscreen = !greenscreen;
+        if (charStr == '2') marker = !marker;
+        if (charStr == '3') lightsaber = !lightsaber;
     };
 
     if (canvas != null) {
@@ -946,7 +982,7 @@ object DOMGlobalScope extends js.GlobalScope {
          setTimeout(function() {
             var camera = new arjs.Camera(video, canvas)
             setInterval(function() {
-              camera.drawOnCanvas(greenscreen, marker)
+              camera.drawOnCanvas(greenscreen, marker, lightsaber)
             }, 20);
           }, 3000);
        }, false);

@@ -17,6 +17,7 @@
 
       var greenscreen = false;
       var marker = false;
+      val lightsaber = false;
 
       document.onkeypress = function(evt) {
           evt = evt || window.event;
@@ -24,13 +25,14 @@
           var charStr = String.fromCharCode(charCode);
           if (charStr == 'g') greenscreen = !greenscreen;
           if (charStr == 'm') marker = !marker;
+          if (charStr == 'j') lightsaber = !lightsaber;
       };
 
       video.addEventListener('play', function() {
         setTimeout(function() {
           var camera = new arjs.Camera(video, canvas)
           setInterval(function() {
-            camera.drawOnCanvas(greenscreen, marker)
+            camera.drawOnCanvas(greenscreen, marker, lightsaber)
           }, 20);
         }, 3000);
       }, false);
