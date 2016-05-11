@@ -85,7 +85,7 @@
 
 <section data-markdown data-state="background">
 <script type="text/template">
-  ## Augmented Reality in Scala.js
+  ## Augmented Reality with Scala.js
 </script>
 </section>
 
@@ -979,12 +979,10 @@ piotr.kukielka@gmail.com
 
     if (canvas != null) {
        video.addEventListener('play', function() {
-         setTimeout(function() {
-            var camera = new arjs.Camera(video, canvas)
-            setInterval(function() {
-              camera.drawOnCanvas(greenscreen, marker, lightsaber)
-            }, 20);
-          }, 3000);
+          var camera = new arjs.Camera(video, canvas)
+          setInterval(function() {
+            camera.drawOnCanvas(greenscreen, marker, lightsaber)
+          }, 20);
        }, false);
 
       var constraints = {

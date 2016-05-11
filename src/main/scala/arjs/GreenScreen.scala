@@ -22,10 +22,10 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
   val deltaValueMax = 1.15
   val downScaleFactor = 5
 
-  val baseCanvas: html.Canvas = createDownscaledCanvas()
-  val backCanvas: html.Canvas = createDownscaledCanvas()
-  val greenScreen = new Array[Boolean](baseCanvas.width * baseCanvas.height)
-  val greenscreenWidth = baseCanvas.width
+  var baseCanvas: html.Canvas = null
+  var backCanvas: html.Canvas = null
+  var greenScreen: Array[Boolean] = null
+  var greenscreenWidth = 0
 
   val lightsaber =  dom.document.createElement("img").asInstanceOf[html.Image]
   lightsaber.src = "imgs/ls.png"
@@ -135,8 +135,6 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
     val height = redY - greenY
     val length = 15 * Math.sqrt(width*width + height*height)
     val angle = Math.atan2(-height, -width) - (Math.PI / 2)
-    canvas.fillRect(redX, redY, 10, 10)
-    canvas.fillRect(greenX, greenY, 10, 10)
 
     if (length < 1500 && length > 100) {
       if (!isLightsaberOn) {
@@ -166,8 +164,18 @@ class GreenScreen(video: html.Video, canvas: html.Canvas) {
   }
 
   def drawGreenScreen(drawGreenBackground: Boolean, drawMarker: Boolean, drawLs: Boolean): Unit = {
-    computeInitialValues()
-    optimizeInitialValues()
+
+    if (drawGreenBackground || drawMarker || drawLs) {
+      if (greenscreenWidth == 0) {
+        baseCanvas = createDownscaledCanvas()
+        backCanvas = createDownscaledCanvas()
+        greenScreen = new Array[Boolean](baseCanvas.width * baseCanvas.height)
+        greenscreenWidth = baseCanvas.width
+      }
+
+      computeInitialValues()
+      optimizeInitialValues()
+    }
 
     if (drawGreenBackground) {
       val canvasImageData =  forPixels(forGreenscreen = true) {
